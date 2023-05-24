@@ -17,7 +17,80 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
+#Comparison of two chromatograms of two separate runs in FPLC
+
+#Purpose: Corresponding fractions were mixed together so making sure they are as close to identical as possible
+
+#Data files were too large to read. So data used is a subset of the data exported from the instrument (only the data necessary to graph is included in the file)
+
+#First plot the data for the first. Already have tidyverse, which includes ggplot (can also edit size of line)
+
 ```{r}
-library(tidyverse)
+ggplot(data = Superdex200_Run1and2_Subset,
+       mapping = aes (x = ml_1,
+                      y = mAU_1))+
+  geom_point(size = .1, color = "red")
+```
+
+#then create second plot in the same way
+
+```{r}
+ggplot(data = Superdex200_Run1and2_Subset,
+      mapping = aes (x = ml_2,
+                      y = mAU_2))+
+  geom_point(size = .1, color = "blue")
+```
+#downloaded cowplot and magick 
+
+```{r}
+library(ggplot2)
+library(magick)
+```
+
+#The goal is to combine them but since they dont have the same x or y axis then they can be combined as images hopefully
+
+```{r}
+p1 <- ggplot() +
+  geom_line(data=Superdex200_Run1and2_Subset, aes(x = ml_1,
+                      y = mAU_1)) +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
+ggsave(filename = 'plot1.png', device = 'png', bg = 'transparent')
+#> Saving 7 x 5 in image
+
+p2 <- ggplot() +
+  geom_line(data=Superdex200_Run1and2_Subset, aes(x = ml_2,
+                      y = mAU_2)) +
+  theme_void() +
+  theme(
+    panel.background = element_rect(fill = "transparent"), # bg of the panel
+    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
+    panel.grid.major = element_blank(), # get rid of major grid
+    panel.grid.minor = element_blank(), # get rid of minor grid
+    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
+    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
+  )
+ggsave(filename = 'plot2.png', device = 'png', bg = 'transparent')
+#> Saving 7 x 5 in image
+
+cowplot::plot_grid(p1, p2, nrow = 1)
+```
+
+#Combine images of plots
+
+```{r}
+plot1 <- image_read('plot1.png')
+plot2 <- image_read('plot2.png')
+
+img <- c(plot1, plot2)
+
+image_mosaic(img)
 ```
 
