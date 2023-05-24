@@ -17,7 +17,7 @@ When you save the notebook, an HTML file containing the code and output will be 
 
 The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
 
-#Comparison of two chromatograms of two separate runs in FPLC
+#Comparison of two chromatograms of two separate runs of the same sample in FPLC for a protein purification step
 
 #Purpose: Corresponding fractions were mixed together so making sure they are as close to identical as possible
 
@@ -83,14 +83,15 @@ ggsave(filename = 'plot2.png', device = 'png', bg = 'transparent')
 cowplot::plot_grid(p1, p2, nrow = 1)
 ```
 
-#Combine images of plots
+#Combine images of plots by morphing to make animation
 
 ```{r}
-plot1 <- image_read('plot1.png')
-plot2 <- image_read('plot2.png')
-
-img <- c(plot1, plot2)
-
-image_mosaic(img)
+library(magick)
+plot1 <- image_scale(image_read("plot1.png"))
+plot2 <- image_scale(image_read("plot2.png"))
+image_resize(c(plot1, plot2), '300x200!') %>%
+  image_background('white') %>%
+  image_morph() %>%
+  image_animate(optimize = TRUE)
 ```
-
+#Animation proves there is no significant difference in the two chromatograms so mixing the corresponding fractions was a good call. It is nice to see the reproducibility of elution times. Next time it would be nice to add fraction names on the image.
