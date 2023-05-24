@@ -26,6 +26,7 @@ The preview shows you a rendered HTML copy of the contents of the editor. Conseq
 #First plot the data for the first. Already have tidyverse, which includes ggplot (can also edit size of line)
 
 ```{r}
+library(ggplot2)
 ggplot(data = Superdex200_Run1and2_Subset,
        mapping = aes (x = ml_1,
                       y = mAU_1))+
@@ -44,39 +45,21 @@ ggplot(data = Superdex200_Run1and2_Subset,
 
 ```{r}
 library(ggplot2)
-library(magick)
+library(cowplot)
 ```
 
-#The goal is to combine them but since they dont have the same x or y axis then they can be combined as images hopefully
+#The goal is to combine them but since they dont have the same x or y axis then they can be combined as images
 
 ```{r}
 p1 <- ggplot() +
   geom_line(data=Superdex200_Run1and2_Subset, aes(x = ml_1,
-                      y = mAU_1)) +
-  theme_void() +
-  theme(
-    panel.background = element_rect(fill = "transparent"), # bg of the panel
-    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-    panel.grid.major = element_blank(), # get rid of major grid
-    panel.grid.minor = element_blank(), # get rid of minor grid
-    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
-    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
-  )
+                      y = mAU_1))
 ggsave(filename = 'plot1.png', device = 'png', bg = 'transparent')
 #> Saving 7 x 5 in image
 
 p2 <- ggplot() +
   geom_line(data=Superdex200_Run1and2_Subset, aes(x = ml_2,
-                      y = mAU_2)) +
-  theme_void() +
-  theme(
-    panel.background = element_rect(fill = "transparent"), # bg of the panel
-    plot.background = element_rect(fill = "transparent", color = NA), # bg of the plot
-    panel.grid.major = element_blank(), # get rid of major grid
-    panel.grid.minor = element_blank(), # get rid of minor grid
-    legend.background = element_rect(fill = "transparent"), # get rid of legend bg
-    legend.box.background = element_rect(fill = "transparent") # get rid of legend panel bg
-  )
+                      y = mAU_2))
 ggsave(filename = 'plot2.png', device = 'png', bg = 'transparent')
 #> Saving 7 x 5 in image
 
@@ -89,9 +72,10 @@ cowplot::plot_grid(p1, p2, nrow = 1)
 library(magick)
 plot1 <- image_scale(image_read("plot1.png"))
 plot2 <- image_scale(image_read("plot2.png"))
-image_resize(c(plot1, plot2), '300x200!') %>%
+image_resize(c(plot1, plot2), '550x400!') %>%
   image_background('white') %>%
   image_morph() %>%
   image_animate(optimize = TRUE)
 ```
-#Animation proves there is no significant difference in the two chromatograms so mixing the corresponding fractions was a good call. It is nice to see the reproducibility of elution times. Next time it would be nice to add fraction names on the image.
+#Animation proves there is no significant difference in the two chromatograms. Mixing the corresponding fractions did not have a negative impact. It is nice to see the reproducibility of elution times. Next time it would be nice to add fraction names on the image to see the exact variation.
+

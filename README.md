@@ -21,3 +21,7 @@ Sources:
 <https://stackoverflow.com/questions/59682133/overlay-two-ggplots-with-different-x-and-y-axes-scales>
 
 <https://cran.r-project.org/web/packages/magick/vignettes/intro.html#Layers>
+
+Video Recording:
+
+<https://media.ucsf.edu/media/Propel_RProejct_AAM/1_twm3axbp>
